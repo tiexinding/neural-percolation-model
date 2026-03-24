@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>神经网络在做什么——神经渗流模型NPM</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.8; color: #333; background: #f5f5f5;
+    max-width: 680px; margin: 0 auto; padding: 16px;
+  }
+  .header {
+    text-align: center; padding: 32px 0 24px;
+    border-bottom: 3px solid #1a73e8;
+  }
+  .header h1 { font-size: 24px; color: #1a1a1a; margin-bottom: 8px; }
+  .header .meta { font-size: 13px; color: #888; }
+
+  h2 {
+    font-size: 18px; color: #1a73e8; margin: 32px 0 12px;
+    padding-left: 12px; border-left: 4px solid #1a73e8;
+  }
+  h3 { font-size: 16px; color: #333; margin: 20px 0 8px; }
+  p { margin: 10px 0; text-align: justify; }
+
+  .highlight {
+    background: #e8f4fd; border-left: 4px solid #1a73e8;
+    padding: 12px 16px; margin: 16px 0; border-radius: 0 6px 6px 0;
+  }
+  .warning {
+    background: #fff8e1; border-left: 4px solid #f9a825;
+    padding: 12px 16px; margin: 16px 0; border-radius: 0 6px 6px 0;
+    font-size: 14px;
+  }
+  .key-eq {
+    background: #f0f7ff; border: 1px solid #c5ddf5;
+    padding: 16px; margin: 16px 0; border-radius: 8px;
+    text-align: center; font-family: "Times New Roman", serif;
+    font-size: 17px;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    font-size: 14px;
+  }
+  th { background: #1a73e8; color: white; padding: 8px 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8f9fa; }
+
+  .chain {
+    background: #f8f9fa; padding: 20px; margin: 20px 0;
+    border-radius: 8px; font-size: 14px; line-height: 2.2;
+  }
+  .chain .arrow { color: #1a73e8; font-weight: bold; }
+
+  .footer {
+    text-align: center; padding: 24px 0; margin-top: 32px;
+    border-top: 2px solid #e0e0e0; font-size: 13px; color: #888;
+  }
+  .footer strong { color: #333; }
+
+  .tag {
+    display: inline-block; background: #e8f4fd; color: #1a73e8;
+    padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 2px;
+  }
+  code {
+    background: #f0f0f0; padding: 1px 4px; border-radius: 3px;
+    font-size: 14px; font-family: Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>神经网络在做什么<br>——神经渗流模型 NPM</h1>
+  <div class="meta">
+    神经CAE · 丁铁新 · 第二篇 · NPM v2.0 · 2026-03
+    <br>
+    <span class="tag">渗流理论</span>
+    <span class="tag">大模型</span>
+    <span class="tag">涌现</span>
+    <span class="tag">CAE工程师视角</span>
+  </div>
+</div>
+
+<!-- ==================== 00 ==================== -->
+<h2>00&emsp;从投影到碎片</h2>
+
+<p>上一篇我提出了一个命题：<strong>AI是自然界整体交互过程的多模态投影</strong>，具有强大的预测能力，但没有自我意识。</p>
+
+<p>这篇继续追问一个关键问题：投影是怎么形成的？</p>
+
+<p>先看一个容易被忽略的事实。GPT-4的训练数据来自互联网上几十亿份文档——新闻、论文、代码、小说、对话、食谱。这些东西<strong>不是一个整体</strong>。每一份文档都只是自然界某次交互过程的一个局部快照——就像从不同角度、不同时间、不同语言拍下的散落照片。</p>
+
+<div class="highlight">
+  <strong>核心洞见：投影本身就意味着碎片化。</strong><br>
+  每条训练数据都是自然界交互的一次局部观测，天然孤立、天然不完整。它们散落在高维概念空间的各个角落——就像分散在各地的小水坑，深浅不一，分布各异，彼此不通。<br><br>
+  神经网络要做的，就是<strong>让这些水坑贯通</strong>。
+</div>
+
+<!-- ==================== 01 ==================== -->
+<h2>01&emsp;神经网络是连通管道</h2>
+
+<p>做CAE多孔介质仿真的同行应该很熟悉PNM——孔网络模型。多孔材料里有无数孔隙，孔隙之间通过孔喉连接。流体从一端流向另一端的能力，取决于孔喉的连通状况和两侧的压力驱动。</p>
+
+<p>神经网络里对应的"压力"，是信息浓度梯度：一个问题进入网络，就像在概念空间制造一个浓度高点，驱动相关知识向它汇聚。这正是注意力机制的物理本质。</p>
+
+<p>与天然多孔介质有一个关键区别：岩石中的孔喉结构由地质过程决定；而神经网络中的权重矩阵由<strong>反向传播优化</strong>。训练不是自然渗流——训练是<strong>孔道工程</strong>。</p>
+
+<table>
+  <tr><th>多孔介质 PNM</th><th>神经渗流模型 NPM</th></tr>
+  <tr><td>孔隙（Pore）</td><td>数据碎片（局部知识单元）</td></tr>
+  <tr><td>孔喉导度 g<sub>ik</sub></td><td>有效权重矩阵 W<sub>eff</sub></td></tr>
+  <tr><td>孔隙浓度场 c<sub>i</sub></td><td>激活场 a<sub>i</sub>（信息势差驱动力）</td></tr>
+  <tr><td>渗流阈值 p<sub>c</sub></td><td>临界密度 ρ<sub>c</sub>（涌现阈值）</td></tr>
+  <tr><td>有效扩散率 D<sub>eff</sub></td><td>泛化能力 C<sub>eff</sub>（幂律增长）</td></tr>
+  <tr><td>主方程：L·c = q</td><td>统一主方程：a<sub>out</sub> = W<sub>eff</sub>·a<sub>in</sub></td></tr>
+</table>
+
+<!-- ==================== 02 ==================== -->
+<h2>02&emsp;统一主方程：误差=0验证</h2>
+
+<p>从信息守恒的唯一前提出发——稳态推理时，任意内部节点流入等于流出——直接推导出：</p>
+
+<div class="key-eq">
+  <strong>统一主方程：a<sub>out</sub> = W<sub>eff</sub> · a<sub>in</sub></strong>
+</div>
+
+<p>W<sub>eff</sub> 是有效导度矩阵，三种主流架构各有对应：</p>
+
+<table>
+  <tr><th>架构</th><th>W<sub>eff</sub> 构造</th><th>特性</th></tr>
+  <tr><td>前馈NN</td><td>W（固定权重）</td><td>有向单向流</td></tr>
+  <tr><td>GNN ★</td><td>D<sup>-½</sup>(A+I)D<sup>-½</sup> = L<sub>norm</sub></td><td>无向扩散 = PNM精确对应，误差=0</td></tr>
+  <tr><td>Transformer</td><td>softmax(QK<sup>T</sup>/√d<sub>k</sub>)</td><td>动态自适应，softmax = 流量守恒</td></tr>
+</table>
+
+<div class="warning">
+  <strong>重要说明：</strong>softmax行归一化 = 流量守恒这个性质对任意行随机矩阵都成立，并非Transformer独有。Transformer类比的更深层问题——W<sub>eff</sub>的输入依赖性在PNM中对应什么——我们推测类似于非牛顿流体的浓度依赖扩散系数。这是NPM最重要的开放理论问题。GNN与PNM的等价是精确的数学推导；Transformer的映射目前是启发性类比。
+</div>
+
+<!-- ==================== 03 ==================== -->
+<h2>03&emsp;核心方程组</h2>
+
+<p>三个输入：N（数据量）、σ（分布广度 0~1）、τ（任务深度）。</p>
+
+<div class="key-eq" style="text-align: left; font-size: 15px;">
+  数据密度：&ensp;ρ = N<sub>B</sub> / exp(α·σ) &emsp; <span class="tag">(C) 启发式</span><br>
+  临界密度：&ensp;ρ<sub>c</sub> = k · σ<sup>δ</sup> · τ &emsp; <span class="tag">(B)+(C) 混合</span><br>
+  泛化能力：&ensp;C<sub>eff</sub> = (ρ−ρ<sub>c</sub>)<sup>β</sup> &ensp;(ρ>ρ<sub>c</sub>) &emsp; <span class="tag">(A) 推导</span><br>
+  最小层数：&ensp;L<sub>min</sub> = α·σ<sup>α</sup>·τ·10 &emsp; <span class="tag">(C) 启发式</span><br>
+  最小参数：&ensp;P<sub>min</sub> = N<sub>B</sub>·σ<sup>α</sup> &emsp; <span class="tag">(C) 启发式</span>
+</div>
+
+<div class="warning">
+  <strong>参数标注：</strong>α=1.5，β=1.4，δ=1.0，k=10 为渗流理论经验起始值，<strong>明确未拟合</strong>。(A) 由渗流理论直接推导；(B) 借用渗流文献；(C) 工程启发式，待Chinchilla和BIG-Bench数据校准。以下数值示例展示<strong>趋势方向</strong>，绝对值依赖于待拟合参数。
+</div>
+
+<p><strong>核心洞见：不要问"要多少数据"，要问"ρ有没有超过ρ<sub>c</sub>？"</strong></p>
+<p>σ小（领域集中）→ 空间小 → 密度高 → 小模型够用<br>
+σ大（跨域通用）→ 空间大 → 密度低 → 必须大模型</p>
+
+<!-- ==================== 04 ==================== -->
+<h2>04&emsp;涌现不是一个点，是一张场</h2>
+
+<p>大家通常把涌现描述成：规模到了某个临界点，能力突然出现。好像开关拨了一下。</p>
+
+<p><strong>这是严重简化的。</strong></p>
+
+<p>真实发生的事情：不同功能有不同的临界密度。随着数据量增加，水系一片一片地连通，功能一个一个地解锁。这不是开关，是水闸——不同闸口在不同水位依次打开。</p>
+
+<table>
+  <tr><th>能力类型</th><th>临界密度</th><th>C<sub>n</sub>≈</th><th>渗流含义</th></tr>
+  <tr><td>事实检索</td><td>最低 ρ<sub>c₁</sub></td><td>1.0</td><td>短路径局部连通</td></tr>
+  <tr><td>翻译 / 摘要</td><td>低 ρ<sub>c₂</sub></td><td>1.3</td><td>跨语言水系贯通</td></tr>
+  <tr><td>代码生成</td><td>中 ρ<sub>c₃</sub></td><td>1.8</td><td>逻辑链路连通</td></tr>
+  <tr><td>复杂推理</td><td>高 ρ<sub>c₄</sub></td><td>2.5</td><td>多跳路径连通</td></tr>
+  <tr><td>数学证明</td><td>最高 ρ<sub>c₅</sub></td><td>4.0</td><td>全域贯通+极深路径</td></tr>
+</table>
+
+<p>做FEA的人都熟悉应力云图。涌现不是"结构什么时候断裂"这个单一临界点，而是整张应力场。</p>
+
+<p>为什么GPT-3能翻译但不太会数学？因为ρ超过了ρ<sub>c₂</sub>，但还没超过ρ<sub>c₅</sub>。不是不够聪明，是翻译水系通了，数学水系还没通。</p>
+
+<!-- ==================== 05 ==================== -->
+<h2>05&emsp;污水、堵塞与假连接：数据质量的渗流视角</h2>
+
+<p>看似存在的水，不一定是干净的水。训练数据里有三种"坏水"，机制各不相同：</p>
+
+<table>
+  <tr><th>数据类型</th><th>PNM类比</th><th>机制</th><th>症状</th></tr>
+  <tr>
+    <td><strong>噪声数据</strong></td>
+    <td>稀释剂</td>
+    <td>降低有效密度ρ<sub>eff</sub>，需更多数据才能到达ρ<sub>c</sub></td>
+    <td>能力延迟，方向不偏</td>
+  </tr>
+  <tr>
+    <td><strong>错误数据</strong></td>
+    <td>污染流体</td>
+    <td>扩散方向偏转，虚假连接形成</td>
+    <td>自信地说错话（幻觉）</td>
+  </tr>
+  <tr>
+    <td><strong>矛盾数据</strong></td>
+    <td>双向抵消</td>
+    <td>同一通道正反驱动力对冲，净流量→0</td>
+    <td>前后矛盾，输出不一致</td>
+  </tr>
+</table>
+
+<div class="highlight">
+  <strong>三种问题，三种解法：</strong><br>
+  噪声 → 增加数据量或缩小σ（致密化）<br>
+  错误 → 方向校正（RLHF）<br>
+  矛盾 → 去重与冲突消解（数据清洗）<br><br>
+  把所有数据问题都当成"需要更多数据"，是混淆了三种物理上完全不同的故障模式。
+</div>
+
+<!-- ==================== 06 ==================== -->
+<h2>06&emsp;三个现象的深入分析</h2>
+
+<h3>量化压缩为什么先丢数学能力？</h3>
+<p>量化降低W<sub>eff</sub>精度 = 均匀缩小孔喉截面。首先断裂的是ρ<sub>c</sub>最高的路径——支撑数学推理的最长、最脆弱的多跳路径。短路径（事实检索）更鲁棒。NPM预测退化顺序：<strong>数学→代码→翻译→事实检索</strong>。可直接对照GPTQ/AWQ论文中MMLU子类得分验证。</p>
+
+<h3>RAG为什么对有些任务有效，有些没用？</h3>
+<p>RAG = 临时向特定区域注水。NPM预测效果呈<strong>倒U型曲线</strong>：当模型内在ρ刚好低于任务ρ<sub>c</sub>时效果最大——注水恰好推过阈值；ρ远高于ρ<sub>c</sub>（已充分连通）时增益小；ρ远低于ρ<sub>c</sub>（根本不连通）时注水也救不了。</p>
+
+<h3>微调为什么只需很少数据？</h3>
+<p>微调 = 局部致密化。将有效σ缩小到窄子域，大幅提升局部ρ。不需要全局连通，只需目标域的局部连通。PNM术语中：微调是在特定岩层钻孔，不是灌溉整个油藏。这解释了为什么LoRA用1000-10000条数据就能在窄域取得强效果。</p>
+
+<!-- ==================== 07 ==================== -->
+<h2>07&emsp;这个模型能解释什么</h2>
+
+<p>NPM统一解释七个工程师最关心的现象：</p>
+
+<p><strong>①</strong> 为什么通用模型必须远大于专用模型？通用σ大，概念空间指数增大，同等N的密度急剧下降。</p>
+<p><strong>②</strong> 为什么微调只需少量数据？局部渗流，局部提高密度。</p>
+<p><strong>③</strong> 为什么量化压缩先损失细粒度能力？高ρ<sub>c</sub>路径最脆弱，最先断开。</p>
+<p><strong>④</strong> 为什么RAG对某些任务特别有效？临时注水，对ρ刚好不够的任务效果显著。</p>
+<p><strong>⑤</strong> 为什么蒸馏有效但有上限？σ压缩有下限，高ρ<sub>c</sub>能力先丢失。</p>
+<p><strong>⑥</strong> 为什么多语言训练需要更大模型？多语言≈更大σ。</p>
+<p><strong>⑦</strong> 为什么注意力机制有效？softmax行归一化 = 流量守恒约束下的自适应导度分配。</p>
+
+<!-- ==================== 08 ==================== -->
+<h2>08&emsp;一张完整的图</h2>
+
+<div class="chain">
+  <strong>数据碎片</strong>（自然界交互的局部投影，散落的水坑）
+  <br><span class="arrow">&emsp;↓</span>&ensp;神经网络 = 连通管道（训练 = 孔道工程）
+  <br><strong>渗流连通</strong>（水系渐进贯通）
+  <br><span class="arrow">&emsp;↓</span>&ensp;不同功能有各自的临界密度ρ<sub>c</sub>（多阈值）
+  <br><strong>选择性涌现</strong>（能力场，分层次依次解锁）
+  <br><span class="arrow">&emsp;↓</span>&ensp;连通使信息可扩散（墨水扩散至全域）
+  <br><strong>感应传播</strong>（D<sub>eff</sub> = C<sub>eff</sub> · W²，超线性）
+  <br><span class="arrow">&emsp;↓</span>&ensp;σ决定网络深度和规模要求
+  <br><strong>泛化能力 · 推理能力 · 迁移能力</strong>
+</div>
+
+<p>这条链有一个工程含义：<strong>任何位置都可以干预。</strong></p>
+
+<table>
+  <tr><th>工程问题</th><th>NPM视角</th><th>解决方向</th></tr>
+  <tr><td>数据不够怎么办</td><td>ρ未超过ρ<sub>c</sub></td><td>增N 或 缩小σ（聚焦领域）</td></tr>
+  <tr><td>模型能力不足</td><td>C<sub>eff</sub>低</td><td>检查ρ是否足够，加深L</td></tr>
+  <tr><td>想用小模型做专项</td><td>局部渗流</td><td>微调，局部提高密度</td></tr>
+  <tr><td>模型出现幻觉</td><td>污染流体</td><td>数据清洗，RLHF修复路径</td></tr>
+  <tr><td>多语言效果不好</td><td>σ大、ρ低</td><td>增大模型规模，或分语种训练</td></tr>
+</table>
+
+<!-- ==================== 09 ==================== -->
+<h2>09&emsp;三个可证伪预测</h2>
+
+<p>一个不能被否定的框架不是科学。NPM给出三个具体的、可测试的预测：</p>
+
+<div class="highlight">
+  <strong>预测1（能力涌现顺序）：</strong>Pythia模型族（70M–12B）的能力涌现应遵循ρ<sub>c</sub>排序：翻译先于代码生成先于复杂推理。可对照BIG-Bench得分验证。<br><br>
+  <strong>预测2（RAG有效性）：</strong>RAG应在高ρ<sub>c</sub>任务上提供更大增益。可对照BEIR基准验证。<br><br>
+  <strong>预测3（量化退化顺序）：</strong>量化应先消除数学能力，后消除翻译和事实检索。可对照GPTQ/AWQ的MMLU子类得分验证。
+</div>
+
+<!-- ==================== 10 ==================== -->
+<h2>10&emsp;诚实说明</h2>
+
+<p>NPM是工程模型，不是数学证明。核心指数（α=1.5，β=1.4，δ=1.0）是物理估计值，需要用Chinchilla扩展律、BIG-Bench涌现数据拟合验证。</p>
+
+<p>这没有问题。CFD里的湍流模型从来没有严格证明，Moody图是纯经验拟合。工程模型的标准是：逻辑自洽、物理可解释、参数可拟合、预测有泛化性。NPM满足这个标准。</p>
+
+<table>
+  <tr><th colspan="2">当前可信度评估</th></tr>
+  <tr><td>✓ 定性预测（趋势方向）</td><td>可信——域越宽→σ越大→密度越低→需要更多层数</td></tr>
+  <tr><td>△ 定量数字（具体C<sub>eff</sub>值）</td><td>参考用——指数拟合完成前不建议直接用于工程决策</td></tr>
+  <tr><td>✓ 统一主方程</td><td>已数值验证（GNN误差=0，注意力流量守恒通过）</td></tr>
+  <tr><td>✓ 三个可证伪预测</td><td>已给出，待实验验证</td></tr>
+</table>
+
+<p><strong>与已有学术研究的关系：</strong>Lubana et al.（2024）用渗流解释Transformer涌现；Brill（2024）在Bethe格严格推导幂律扩展律。NPM建立在这些工作之上。诚实评估：在扩展律这个具体问题上，Brill的推导比NPM更严格。NPM的差异化贡献在于：多阈值场视角、统一主方程覆盖三种架构、PR法量化σ、工程框架定位。</p>
+
+<p>代码（npm_core.py + npm_pore_analysis.py + npm_param_fit.py）已开源。临界指数已用14个公开模型拟合校准（Spearman=0.70）。MIS孔隙分析在Pythia-70m上发现训练过程的三阶段相变——蓄压、突破、重组——直接对应渗流理论中的巨连通分量形成。欢迎有数据、有算力、有想法的朋友一起在更大模型上验证。</p>
+
+<div class="highlight" style="text-align: center; font-size: 17px;">
+  <strong>大道至简。<br>数据是散落的水坑，网络是孔道工程，智能是贯通后的流动。</strong>
+</div>
+
+<div class="footer">
+  <strong>神经CAE · 丁铁新</strong><br>
+  20年仿真实战 · 10年编程/算法 · 5年AI实践<br>
+  不喊口号，只写跑过的模型、算过的问题、踩过的坑<br><br>
+  📄 Zenodo：<a href="https://zenodo.org/records/19209722">zenodo.org/records/19209722</a><br>
+  📄 arXiv论文：<em>Neural Percolation Model (NPM)</em><br>
+  💻 GitHub：github.com/tiexinding/neural-percolation-model<br><br>
+  © 丁铁新 2026
+</div>
+
+</body>
+</html>

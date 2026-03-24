@@ -1,0 +1,8 @@
+numpy>=1.23
+scipy>=1.9
+scikit-learn>=1.1      # 可选：sigma_estimation.py 大矩阵SVD加速
+
+# npm_pore_analysis.py 需要（MIS孔隙形态分析实验）
+torch>=2.0
+transformers>=4.30
+porespy>=2.0
