@@ -2,7 +2,7 @@
 
 **An Engineering Analogy Framework for Neural Network Information Propagation and Capability Emergence**
 
-With companion article series "AI Is Not Mysterious" (9 articles in Chinese), introducing four original concepts: NPM / EVM / Three-Layer Isomorphism / Learning from AI as a Teacher
+With companion article series "AI Is Not Mysterious" (11 articles in Chinese), introducing four original concepts: NPM / EVM / Three-Layer Isomorphism / Learning from AI as a Teacher
 
 Author: Tiexin Ding (丁铁新) · NeuralCAE · Independent Researcher, China
 
@@ -27,7 +27,7 @@ where W_eff takes three forms covering all major architectures: feedforward netw
 
 ## Article Series: AI Is Not Mysterious — A CAE Engineer's Perspective
 
-Nine articles (in Chinese) systematically analyze AI from first principles using the language of CAE engineers. Full text available in `6_Articles_CN/` directory, also published on Zhihu and WeChat (NeuralCAE).
+Eleven articles (in Chinese) systematically analyze AI from first principles using the language of CAE engineers. Full text available in `6_Articles_CN/` directory, also published on Zhihu and WeChat (NeuralCAE).
 
 | # | Title | Core Content |
 |---|-------|-------------|
@@ -40,6 +40,8 @@ Nine articles (in Chinese) systematically analyze AI from first principles using
 | 7 | Physical AI Roadmap — Engineering Verification Model | EVM 5-stage roadmap, V-model mapping |
 | 8 | Cognitive Percolation | Creative process documentary, three-layer isomorphism discovery |
 | 9 | Insights Beyond Reasoning | Change vs. permanence in the AI era, learning from AI |
+| 10 | Creator Interview | Five voices answer independently, human-AI collaboration in practice |
+| 11 | Gratitude | To mentors, family, open-source community, and readers |
 
 ## Key Contributions
 
@@ -74,7 +76,9 @@ neural-percolation-model/
 │   ├── 06_Where_Is_The_Road.md
 │   ├── 07_EVM_Roadmap.md
 │   ├── 08_Cognitive_Percolation.md
-│   └── 09_Beyond_Reasoning.md
+│   ├── 09_Beyond_Reasoning.md
+│   ├── 10_Creator_Interview.md
+│   └── 11_Gratitude.md
 ├── README.md            # This file (English)
 └── README_CN.md         # Chinese README
 ```
@@ -116,7 +120,7 @@ Inspired by PoreSpy's MIS method, we mapped PNM pore analysis tools onto NN weig
 | B-layer parameters | ✓ Fitted: α=0.57, β=0.068, δ=2.76, k=68.5 (Spearman=0.70) |
 | MIS pore analysis | ✓ 6 experiments on GPT-2 & Pythia-70m |
 | Training phase transition | ✓ Three-phase pattern identified |
-| Article series (Chinese) | ✓ All 9 articles published |
+| Article series (Chinese) | ✓ All 11 articles published |
 | Capability emergence ordering | △ Predicted, awaiting BIG-Bench validation |
 
 ## Collaboration
