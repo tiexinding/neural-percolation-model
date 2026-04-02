@@ -2,7 +2,9 @@
 
 **An Engineering Analogy Framework for Neural Network Information Propagation and Capability Emergence**
 
-Author: Ding Tiexin (丁铁新) · NeuralCAE · Independent Researcher, China
+With companion article series "AI Is Not Mysterious" (9 articles in Chinese), introducing four original concepts: NPM / EVM / Three-Layer Isomorphism / Learning from AI as a Teacher
+
+Author: Tiexin Ding (丁铁新) · NeuralCAE · Independent Researcher, China
 
 ---
 
@@ -12,7 +14,32 @@ NPM maps the physics of Pore Network Models (PNM) — widely used in reservoir e
 
 **a_out = W_eff · a_in**
 
-where W_eff takes three forms covering all major architectures: feedforward networks, GNNs (exact PNM analog, verified with zero error), and Transformers (softmax attention as flow conservation).
+where W_eff takes three forms covering all major architectures: feedforward networks (fixed weights), GNNs (graph Laplacian, exact PNM analog, verified with zero error), and Transformers (softmax attention as flow conservation).
+
+## Four Original Concepts
+
+| Concept | Nature | First Proposed | Core Content |
+|---------|--------|---------------|-------------|
+| **NPM (Neural Percolation Model)** | Mathematical framework | Article 2 | GNN message passing = PNM nodal conservation, 4 isomorphisms, verification error = 0 |
+| **EVM (Engineering Verification Model)** | Application roadmap | Article 7 | 5-stage verification roadmap for Physical AI, V-model mapping |
+| **Three-Layer Isomorphism** | Theoretical discovery | Article 8 | Natural percolation / AI capability emergence / human cognitive emergence follow the same mathematics |
+| **Learning from AI as a Teacher** | Methodology | Article 9 | Lower your stance, learn AI by using AI; judgment is the essence of intelligence |
+
+## Article Series: AI Is Not Mysterious — A CAE Engineer's Perspective
+
+Nine articles (in Chinese) systematically analyze AI from first principles using the language of CAE engineers. Full text available in `6_Articles_CN/` directory, also published on Zhihu and WeChat (NeuralCAE).
+
+| # | Title | Core Content |
+|---|-------|-------------|
+| 1 | What Is AI — First Principles Reasoning | AI is a multimodal projection of nature's interaction processes |
+| 2 | What Neural Networks Do — NPM | Projection forms through percolation connectivity |
+| 3 | AI Is Not Mysterious — When Percolation Meets NN | GNN = PNM mathematical verification, error = 0 |
+| 4 | Neural Networks and CAE — A Panoramic Map | Four isomorphisms, shared mathematical foundation |
+| 5 | Current AI Is Not Perfect — From Demystification to Debugging | MeshGraphNet hands-on, nine gaps all pointing to verification |
+| 6 | Where Is the Road — Engineering World Models | Data + compute + verification: three legs |
+| 7 | Physical AI Roadmap — Engineering Verification Model | EVM 5-stage roadmap, V-model mapping |
+| 8 | Cognitive Percolation | Creative process documentary, three-layer isomorphism discovery |
+| 9 | Insights Beyond Reasoning | Change vs. permanence in the AI era, learning from AI |
 
 ## Key Contributions
 
@@ -25,120 +52,60 @@ where W_eff takes three forms covering all major architectures: feedforward netw
 ## Repository Structure
 
 ```
-NPM_v13_complete/
+neural-percolation-model/
 ├── 1_Paper_CN/          # Chinese paper (xelatex + xeCJK)
-│   ├── npm_paper_CN.tex
-│   ├── npm_paper_CN.pdf
-│   └── NPM_Fig*_CN.png
 ├── 2_Paper_EN/          # English paper (pdflatex, arXiv-ready)
-│   ├── npm_arxiv_paper.tex
-│   ├── npm_arxiv_paper.pdf
-│   └── NPM_Fig*_EN.png
 ├── 3_Figures_CN/        # Chinese figure PNGs
-├── 4_Figures_EN/        # English figure PNGs (not present, see note)
+├── 4_Figures_EN/        # English figure PNGs
 ├── 5_codes/             # Python implementation
-│   ├── .python-version      # Python version (3.10+)
-│   ├── requirements.txt     # Dependencies
 │   ├── npm_core.py          # Core NPM equations
 │   ├── sigma_estimation.py  # PR method for σ estimation
 │   ├── npm_validation.py    # A-layer numerical checks
 │   ├── npm_scaling_check.py # B-layer vs Kaplan/Chinchilla
 │   ├── npm_dimensionless.py # Cn empirical analysis (14 models)
-│   ├── npm_pore_analysis.py # MIS-based pore analysis (NEW)
-│   └── npm_param_fit.py     # B-layer parameter fitting (NEW)
+│   ├── npm_pore_analysis.py # MIS-based pore analysis
+│   └── npm_param_fit.py     # B-layer parameter fitting
+├── 6_Articles_CN/       # Chinese article series (9 articles)
+│   ├── 01_AI_First_Principles.md
+│   ├── 02_Neural_Percolation_Model.md
+│   ├── 03_Percolation_Meets_NN.md
+│   ├── 04_Panorama_Map.md
+│   ├── 05_Demystify_to_Debug.md
+│   ├── 06_Where_Is_The_Road.md
+│   ├── 07_EVM_Roadmap.md
+│   ├── 08_Cognitive_Percolation.md
+│   └── 09_Beyond_Reasoning.md
 ├── README.md            # This file (English)
 └── README_CN.md         # Chinese README
 ```
 
-## Compilation
+## Compilation & Running
 
-**English version (arXiv submission):**
+**English paper (arXiv submission):**
 ```bash
-cd 2_Paper_EN/
-pdflatex npm_arxiv_paper.tex
-pdflatex npm_arxiv_paper.tex  # run twice for cross-references
+cd 2_Paper_EN/ && pdflatex npm_arxiv_paper.tex && pdflatex npm_arxiv_paper.tex
 ```
 
-**Chinese version:**
+**Chinese paper:**
 ```bash
-cd 1_Paper_CN/
-xelatex npm_paper_CN.tex
-xelatex npm_paper_CN.tex
+cd 1_Paper_CN/ && xelatex npm_paper_CN.tex && xelatex npm_paper_CN.tex
 ```
-Requires: Noto CJK fonts + texlive-lang-chinese
 
-## Python Environment
-
-Requires Python 3.10+.
-
+**Python code:**
 ```bash
 cd 5_codes/
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+python npm_core.py
 ```
 
-## Quick Start (Code)
+## MIS Pore Analysis (Core Experiments)
 
-```python
-from npm_core import compute_density, compute_ceff, compute_critical_density
+Inspired by PoreSpy's MIS method, we mapped PNM pore analysis tools onto NN weight space. Three key findings:
 
-# Example: 100B tokens, medium domain breadth
-# Parameters are fitted values (see npm_param_fit.py)
-rho = compute_density(N_B=100, sigma=0.5)
-rho_c = compute_critical_density(sigma=0.5)
-c_eff = compute_ceff(rho, rho_c)
-
-print(f"Data density: {rho:.1f}")
-print(f"Critical density: {rho_c:.1f}")
-print(f"Generalization capacity: {c_eff:.4f}")
-```
-
-## MIS Pore Analysis Experiments (NEW)
-
-Inspired by PoreSpy's Maximum Inscribed Sphere (MIS) method, we mapped PNM pore analysis tools onto NN weight space. Six experiments were conducted on GPT-2 (124M) and Pythia-70m:
-
-### Key Findings
-
-**1. Weight distributions share shape with pore-size distributions but belong to different families**
-
-|  | NN (GPT-2) | PNM (random porous media) |
-|--|-----------|--------------------------|
-| Weibull shape k | 1.14 (exponential-type) | 2.4–2.9 (peaked) |
-| Tail exponent α | 4.36 (moderate heavy tail) | 8–10 (light tail) |
-| CV | 0.86 | 0.35–0.45 |
-| Rank correlation (vs PNM φ=0.7) | — | 0.983 |
-
-After removing scale differences (rank normalization), distribution shapes are highly similar (r=0.98). The NN develops a more heterogeneous channel structure than natural rock — resembling engineered directional-pore ceramics rather than sandstone.
-
-**2. Training = percolation channel optimization**
-
-GPT-2 training increases |w| mean by 6.4×, but standard deviation grows even faster (7.3×). The "large-pore fraction" (|w|>0.1) goes from 0% to 41%. Training selectively amplifies a few dominant pathways and suppresses the rest — precisely the "preferential flow path" formation in PNM.
-
-**3. Three-phase transition during training (Pythia-70m, 13 checkpoints)**
-
-| Phase | Training steps | NN behavior | PNM analogy |
-|-------|---------------|-------------|-------------|
-| Pressurization | 0 – 1,000 | CV stable at 0.795, weights barely change | Pressure below entry threshold |
-| Breakthrough | 1,000 – 16,000 | |w| doubles, large-pore fraction peaks at 8.4% | Fluid invades largest pore throats |
-| Reorganization | 64,000 – 143,000 | |w| **decreases**, but CV surges 0.82→1.51 | Dominant channels selected, rest shut down |
-
-**Phase transition point: step 64,000 → 128,000** (ΔCV = +0.49). This is the NN equivalent of "giant connected component formation" in percolation theory.
-
-### Running the experiments
-
-```bash
-cd 5_codes/
-source .venv/bin/activate
-pip install torch transformers porespy
-python npm_pore_analysis.py
-```
-
-### Honesty note
-
-- Distribution-family differences (Weibull k=1.1 vs 2.5) mean the analogy is structural, not mathematical identity
-- Phase transition granularity is limited by available checkpoint spacing
-- Validated on GPT-2 and Pythia-70m only; more models and scales needed
+1. **NN weight distributions share shape with PNM pore-size distributions but belong to different families** — rank correlation r=0.98 after scale removal; NNs develop more extreme heterogeneity than natural rock
+2. **Training = percolation channel optimization** — GPT-2 training increases large-pore fraction from 0% to 41%, selectively amplifying dominant pathways
+3. **Three-phase training transition (Pythia-70m)** — Pressurization → Breakthrough → Reorganization; CV surges from 0.82 to 1.51, corresponding to giant connected component formation in percolation theory
 
 ## Current Status
 
@@ -146,28 +113,23 @@ python npm_pore_analysis.py
 |-----------|--------|
 | Unified master equation (A-layer) | ✓ Numerically verified, error = 0 |
 | GNN–PNM equivalence | ✓ Exact mathematical equivalence |
-| Attention flow conservation | ✓ Verified |
-| σ monotonicity (PR method) | ✓ Validated on synthetic data |
-| MIS pore analysis (weight distributions) | ✓ 6 experiments completed on GPT-2 & Pythia-70m |
-| Training phase transition (Pythia) | ✓ Three-phase pattern identified |
-| B-layer parameters (α, β, δ, k) | ✓ Fitted: α=0.57, β=0.068, δ=2.76, k=68.5 (Spearman=0.70, Kaplan slope matched) |
-| Capability emergence ordering | △ Predicted, not yet tested against BIG-Bench |
+| B-layer parameters | ✓ Fitted: α=0.57, β=0.068, δ=2.76, k=68.5 (Spearman=0.70) |
+| MIS pore analysis | ✓ 6 experiments on GPT-2 & Pythia-70m |
+| Training phase transition | ✓ Three-phase pattern identified |
+| Article series (Chinese) | ✓ All 9 articles published |
+| Capability emergence ordering | △ Predicted, awaiting BIG-Bench validation |
 
 ## Collaboration
 
-This is an open invitation for collaboration:
-- Researchers with access to Pythia/OLMo checkpoints for quantitative validation
-- Theorists who can formalize the Transformer–PNM mapping (concentration-dependent diffusivity conjecture)
-- Engineers interested in applying NPM to architecture design decisions
-- Experimentalists who can validate the three-phase training transition on larger models
+Open invitation for collaboration: researchers with large model checkpoints, theorists, engineers, and experimentalists are all welcome.
 
-Contact: see GitHub Issues or submit a Pull Request.
+Contact: GitHub Issues or Pull Request.
 
 ## Citation
 
 ```bibtex
 @article{ding2026npm,
-  title={Neural Percolation Model (NPM): An Engineering Analogy Framework 
+  title={Neural Percolation Model (NPM): An Engineering Analogy Framework
          for Neural Network Information Propagation and Capability Emergence},
   author={Ding, Tiexin},
   journal={arXiv preprint},
@@ -175,14 +137,19 @@ Contact: see GitHub Issues or submit a Pull Request.
 }
 ```
 
-## Zenodo Archive
-
-Archived version with all experimental results: https://zenodo.org/records/19209722
-
-## License
-
-MIT License. See individual files for details.
-
 ## Acknowledgments
 
 The author used Claude (Anthropic) as a writing assistance tool. All theoretical content, conceptual framework, equations, and conclusions are the sole intellectual contribution of the author.
+
+## Links
+
+- Zenodo Archive: https://zenodo.org/records/19209722
+- arXiv Paper: [to be added after acceptance]
+- Zhihu Column: AI并不神秘——一个CAE工程师的视角
+- WeChat: NeuralCAE
+- GitHub: https://github.com/tiexinding/neural-percolation-model
+
+---
+
+**NeuralCAE · Tiexin Ding**
+20 years of simulation practice · Original concepts: NPM / EVM / Three-Layer Isomorphism / Learning from AI

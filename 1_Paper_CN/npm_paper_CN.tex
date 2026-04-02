@@ -42,6 +42,7 @@
 \maketitle
 
 % ── 摘要 ──────────────────────────────────────────────
+\renewcommand{\abstractname}{摘要}
 \begin{abstract}
 本文提出\textbf{神经渗流模型（NPM，Neural Percolation Model）}——将多孔介质孔网络模型（PNM）物理原理映射到神经网络信息传播的工程框架。从单一守恒原理出发——稳态推理时节点信息流入等于流出——推导出统一主方程：
 \[
@@ -49,6 +50,37 @@
 \]
 其中有效导度矩阵 $\Weff$ 对应三种主流架构：前馈网络（固定权重）、图神经网络（图拉普拉斯，与PNM精确对应，数值误差=0）、Transformer（动态softmax注意力，行归一化=流量守恒）。框架引入基于渗流的数据密度模型，能力在数据密度 $\rho$ 超过各自临界密度 $\rho_c$ 时涌现，形成\emph{多阈值场视角}而非单一临界点。参与率（PR）法定量估算数据分布广度 $\sigma$，单调性已验证。B层参数（$\alpha,\beta,\delta,k$）已用14个公开模型和Kaplan定律拟合校准，Spearman相关达0.70，扩展律指数$N^{0.076}$精确匹配。借鉴PoreSpy的MIS法对NN权重矩阵进行孔隙分析，在Pythia-70m上发现\emph{三阶段训练相变}（蓄压—突破—重组），类比渗流阈值跨越。框架统一解释17类LLM现象，定位为类比达西定律与雷诺数的工程框架。
 \end{abstract}
+
+\bigskip
+\noindent\textbf{Abstract.}\quad
+We propose the \textbf{Neural Percolation Model (NPM)}, an engineering framework
+that maps the physics of Pore Network Models (PNM) onto neural network information
+propagation. Starting from a single conservation principle---steady-state information
+flow satisfies nodal balance---we derive a \emph{unified master equation}:
+\[
+  \mathbf{a}_{\text{out}} = \Weff \cdot \mathbf{a}_{\text{in}}
+\]
+where the effective conductance matrix $\Weff$ takes three distinct forms
+corresponding to feedforward networks (fixed weights), Graph Neural Networks
+(graph Laplacian, exact PNM analog, verified with zero numerical error), and
+Transformers (dynamic softmax attention, row-normalization verified as flow
+conservation). We further introduce a percolation-based data density model in
+which emergent capabilities arise when data density $\rho$ exceeds
+capability-specific critical densities $\rho_c$, yielding a \emph{multi-threshold
+field view} of emergence rather than a single critical point. A Participation
+Ratio (PR) method for quantifying data distribution breadth $\sigma$ is proposed
+and validated (monotonicity confirmed). B-layer parameters
+($\alpha$, $\beta$, $\delta$, $k$) are fitted against 14 public models and
+Kaplan scaling data, achieving Spearman correlation 0.70 with MMLU and exact
+matching of the empirical scaling exponent $N^{0.076}$.
+MIS-based pore analysis of NN weight matrices reveals a \emph{three-phase
+training transition} (pressurization--breakthrough--reorganization) in
+Pythia-70m, analogous to percolation threshold crossing. The framework
+unifies 17 observed LLM phenomena under a single physical mechanism.
+We position NPM as an engineering analogy framework in the tradition of Darcy's
+Law and the Reynolds number.
+
+\noindent\textbf{Keywords:} neural network, percolation theory, pore network model, emergence, scaling law, information propagation, engineering analogy
 
 \textbf{关键词：}神经网络、渗流理论、孔网络模型、涌现、扩展律、信息传播、工程比拟
 
@@ -663,6 +695,7 @@ $C_n$作为无量纲判据能解释参数量无法解释的反常（如BLOOM-176
 
 \paragraph{致谢。}
 作者使用Claude（Anthropic）作为写作辅助工具。所有理论内容、概念框架、方程和结论均为作者独立的知识贡献。
+本文英文预印本已发布于Zenodo，DOI: 10.5281/zenodo.19209722。
 
 \paragraph{合作邀请。}
 本预印本是开放合作邀请。作者积极寻求拥有Pythia/OLMo checkpoint的研究者进行定量验证，以及能够深化Transformer–PNM映射的理论研究者。
